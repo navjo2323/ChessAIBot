@@ -156,14 +156,9 @@ def encode_FEN(string):
 class ChessConvNet(nn.Module):
     def __init__(self):
         """ Initialize the layers of your neural network
+        """ 
 
-        You should use nn.Conv2d, nn.MaxPool2D, and nn.Linear
-        The layers of your neural network (in order) should be
-        1) a 2D convolutional layer with 2 input channel and 8 outputs, with a kernel size of 3, followed by 
-        2) a 2D maximimum pooling layer, with kernel size 2
-        3) a 2D convolutional layer with 8 input channels and 4 output channels, with a kernel size of 3
-        4) a fully connected (Linear) layer with 4 inputs and 1 output
-        """
+        
         super(ChessConvNet, self).__init__()
         self.l1 = nn.Conv2d(in_channels=4,out_channels=10,kernel_size = 3)
         self.l2 = nn.MaxPool2d(kernel_size=2)
@@ -171,7 +166,7 @@ class ChessConvNet(nn.Module):
         self.l4 = nn.Linear(in_features=4, out_features=1)
 
     def set_parameters(self, kern1, bias1, kern2, bias2, kern3, bias3, fc_weight, fc_bias):
-        """ Set the parameters of your network
+        """ Set the parameters of the network
 
         @param kern1: an (8, 2, 3, 3) torch tensor
         @param bias1: an (8,) torch tensor
@@ -180,6 +175,7 @@ class ChessConvNet(nn.Module):
         @param fc_weight: an (1, 4) torch tensor
         @param fc_bias: an (1,) torch tensor
         """
+        
         self.l1.weight= nn.Parameter(kern1)
         self.l1.bias=nn.Parameter(bias1)
         #self.l2.weight = nn.Parameter(kern3)
@@ -191,14 +187,7 @@ class ChessConvNet(nn.Module):
         pass
 
     def intermediate(self, xb):
-        """ Return the feature representation your network lerans
-
-        Note that the nonlinearity between each layer should be F.relu.  You
-        may need to use a tensor's view() method to reshape outputs. Hint: this
-        should be very similar to your forward method
-        @param xb: an (N, 8, 8) torch tensor
-        @return: an (N, 4) torch tensor
-        """
+       
         n,a,b = xb.shape
         relu_on_convolve = F.relu(self.l1(xb))
         after_max_pool = self.l2(relu_on_convolve)
@@ -207,12 +196,9 @@ class ChessConvNet(nn.Module):
         return convolve_2_relu.view(1,4)
 
     def forward(self, xb):
-        """ A forward pass of your neural network
+        """ A forward pass of the neural network
 
-        Note that the nonlinearity between each layer should be F.relu.  You
-        may need to use a tensor's view() method to reshape outputs
-        @param xb: an (1, 8, 8) torch tensor
-        @return: an (N, 1) torch tensor
+        
         """
         n,a,b = xb.shape
         relu_on_convolve = F.relu(self.l1(xb.view(1,n,a,b)))
@@ -237,7 +223,6 @@ def load_puzzle(pgn_handle):
         return None, None
     fen = game.headers['FEN']
     board.set_fen(fen)
-    #move = None
     for j, mv in enumerate(game.mainline_moves()):
         if j == 0:
             board.push(mv)
@@ -245,9 +230,7 @@ def load_puzzle(pgn_handle):
             return board, mv
 
 def fit(net,optimizer,n_epochs):
-    """
-    This is just a snippet for reading board-move pairs you might use for training
-    """
+ 
     epoch_loss = []
     boards = []
     moves = []
@@ -262,7 +245,6 @@ def fit(net,optimizer,n_epochs):
 
     for _ in range(n_epochs):
         print('epoch number', _+1)
-        #loss = torch.zeros(3, dtype = torch.float)
         loss = torch.zeros(len(boards), dtype = torch.float)
         for i in range(len(boards)):
             
@@ -288,7 +270,7 @@ def fit(net,optimizer,n_epochs):
             #print(loss)
         
         epoch_loss.append(loss.sum())
-        # Before the backward pass, use the optimizer object to zero all of the
+   
         # gradients for the Tensors it will update (which are the learnable weights
         # of the model)
         optimizer.zero_grad()
@@ -326,11 +308,11 @@ def move(board):
         
     
     maxscore, index = torch.max(score,0)
-    #print(index)
+ 
     index = index.numpy()
-    #print(moves)
+  
     
     return moves[index]
     
     
-    #TODO: prediction here
+   
